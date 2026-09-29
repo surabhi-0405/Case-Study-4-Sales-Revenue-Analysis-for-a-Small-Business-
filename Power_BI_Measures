@@ -1,1 +1,130 @@
+Average Historical CLV = 
+AVERAGE(
+    'trendmart_analytics customer_metrics'[Total_Revenue]
+) 
 
+---------------------------------------------------------------------------------------------------
+Average Order Value = 
+DIVIDE(
+    [Total Revenue],
+    [Total Transactions]
+)
+---------------------------------------------------------------------------------------------------
+Average Purchase Frequency = 
+AVERAGE(
+    'trendmart_analytics customer_metrics'[Transaction_Frequency]
+)
+---------------------------------------------------------------------------------------------------
+Average Revenue per Customer = 
+DIVIDE(
+    [Total Revenue],
+    [Total Customers]
+)
+---------------------------------------------------------------------------------------------------
+Average Selling Price = 
+DIVIDE(
+    [Total Revenue],
+    [Total Quantity Sold]
+)
+---------------------------------------------------------------------------------------------------
+Customer Count by Segment = 
+DISTINCTCOUNT(
+    'trendmart_analytics customer_metrics'[Customer_ID]
+)
+---------------------------------------------------------------------------------------------------
+Historical CLV by Customer = 
+SUM(
+    'trendmart_analytics customer_metrics'[Total_Revenue]
+)
+---------------------------------------------------------------------------------------------------
+Maximum Historical CLV = 
+MAX(
+    'trendmart_analytics customer_metrics'[Total_Revenue]
+)
+---------------------------------------------------------------------------------------------------
+MoM Revenue Growth % = 
+DIVIDE(
+    [Total Revenue] - [Previous Month Revenue],
+    [Previous Month Revenue]
+)
+---------------------------------------------------------------------------------------------------
+Previous Month Revenue = 
+CALCULATE(
+    [Total Revenue],
+    DATEADD(
+        'DateTable'[Date],
+        -1,
+        MONTH
+    )
+)
+---------------------------------------------------------------------------------------------------
+Revenue Contribution % = 
+DIVIDE(
+    [Total Revenue],
+    CALCULATE(
+        [Total Revenue],
+        ALL('trendmart_analytics sales')
+    )
+)
+---------------------------------------------------------------------------------------------------
+Segment Revenue = 
+SUM(
+    'trendmart_analytics customer_metrics'[Total_Revenue]
+)
+---------------------------------------------------------------------------------------------------
+Segment Revenue Contribution % = 
+DIVIDE(
+    [Segment Revenue],
+    CALCULATE(
+        [Segment Revenue],
+        ALL('trendmart_analytics customer_metrics'[Customer_Segment])
+    )
+)
+---------------------------------------------------------------------------------------------------
+Top Category = 
+VAR CategoryRevenue =
+    ADDCOLUMNS(
+        VALUES('trendmart_analytics sales'[Product_Category]),
+        "Revenue", [Total Revenue]
+    )
+RETURN
+    CONCATENATEX(
+        TOPN(
+            1,
+            CategoryRevenue,
+            [Revenue],
+            DESC
+        ),
+        'trendmart_analytics sales'[Product_Category],
+        ", "
+    )
+---------------------------------------------------------------------------------------------------
+Top Product = 
+VAR ProductRevenue =
+    ADDCOLUMNS(
+        VALUES('trendmart_analytics sales'[Product_Name]),
+        "Revenue", [Total Revenue]
+    )
+RETURN
+    CONCATENATEX(
+        TOPN(
+            1,
+            ProductRevenue,
+            [Revenue],
+            DESC
+        ),
+        'trendmart_analytics sales'[Product_Name],
+        ", "
+    )
+---------------------------------------------------------------------------------------------------
+Total Customers = 
+DISTINCTCOUNT('trendmart_analytics customers'[Customer_ID])
+---------------------------------------------------------------------------------------------------
+Total Quantity Sold = 
+SUM('trendmart_analytics sales'[Quantity])
+---------------------------------------------------------------------------------------------------
+Total Revenue = 
+SUM('trendmart_analytics sales'[Total_Amount])
+---------------------------------------------------------------------------------------------------
+Total Transactions = 
+DISTINCTCOUNT('trendmart_analytics sales'[Transaction_ID])
